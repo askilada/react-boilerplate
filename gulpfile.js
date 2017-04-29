@@ -5,12 +5,15 @@ const babelify = require('babelify');
 const browserify = require('browserify');
 const source = require('vinyl-source-stream');
 const buffer = require('vinyl-buffer');
+const less = require('gulp-less');
 
 
-gulp.task('default', ['my-app']);
+gulp.task('default', ['my-app'], function (done) {
+    done()
+});
 
 
-gulp.task('my-app', function () {
+gulp.task('my-app', function (done) {
     var bundler = browserify('src/app.js');
     bundler.transform(babelify)
 
@@ -19,7 +22,19 @@ gulp.task('my-app', function () {
         .pipe(source('app.js'))
         .pipe(buffer())
         .pipe(gulp.dest('public/js'))
+        done()
+})
 
+gulp.task("watch", function(done) {
+    gulp.watch("src/**/*.js", ["my-app"]);
+    gulp.watch("less/**/*.less", ["less"]);
+    done()
+});
+
+gulp.task('less', function () {
+    return gulp.src('less/main.less')
+        .pipe(less())
+        .pipe(gulp.dest('./public/css'))
 })
 
 
